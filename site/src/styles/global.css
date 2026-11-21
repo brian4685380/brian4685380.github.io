@@ -47,10 +47,9 @@ pre { overflow: auto; }
 .header, .footer { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-md); padding-block: var(--space-lg); }
 .header { border-block-end: 1px solid var(--border); }
 .footer { border-block-start: 1px solid var(--border); color: var(--muted); }
-.header nav, .controls, .inline-list { display: flex; flex-wrap: wrap; gap: var(--space-md); align-items: center; }
+.controls, .inline-list { display: flex; flex-wrap: wrap; gap: var(--space-md); align-items: center; }
 .header a, .footer a, .controls button { font-size: 0.875rem; }
 .site-name { font-weight: 700; }
-.header a[aria-current='page'] { color: var(--text); font-weight: 700; }
 .controls button { padding: var(--space-xs) var(--space-sm); border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text); font-family: var(--font-code); text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; }
 .main { padding-block: var(--space-2xl); min-block-size: 55vh; }
 .intro { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-xl); margin-block-end: var(--space-xl); }

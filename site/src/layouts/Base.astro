@@ -1,7 +1,7 @@
 ---
 import { profile } from '../data/profile';
 import { ui, type Language } from '../data/ui';
-import { primaryRoutes, publicLanguages, routePath } from '../lib/routes.mjs';
+import { publicLanguages, routePath } from '../lib/routes.mjs';
 import { withBase } from '../lib/url';
 import '../styles/global.css';
 
@@ -58,13 +58,6 @@ const socialImage = profile.socialImage.startsWith('TODO:')
     <a class="skip-link" href={withBase('#main')}>{copy.skip}</a>
     <header class="shell header">
       <a class="site-name" href={withBase(routePath(lang, 'home'))}>{profile.name}</a>
-      <nav aria-label={copy.navigation}>
-        {primaryRoutes.map((item) => (
-          <a href={withBase(routePath(lang, item))} aria-current={page === item ? 'page' : undefined}>
-            {copy[item as keyof typeof copy]}
-          </a>
-        ))}
-      </nav>
       <div class="controls">
         {other && <a href={withBase(routePath(other, page))} lang={other} hreflang={other}>
           {other === 'en' ? 'English' : '繁體中文'}
@@ -75,7 +68,6 @@ const socialImage = profile.socialImage.startsWith('TODO:')
     <main class="shell main" id="main"><slot /></main>
     <footer class="shell footer">
       <span>{profile.name}</span>
-      <a href={withBase(routePath(lang, 'rss'))}>{copy.rss}</a>
     </footer>
     <script>
       const toggle = document.querySelector<HTMLButtonElement>('#theme-toggle');

@@ -18,7 +18,7 @@ const { entries, lang } = Astro.props;
       {entry.sample && <p class="sample">{ui[lang].sample}</p>}
       <p>
         {entry.authors.map((author, index) => (
-          <>{index > 0 && ', '}{author === profile.name ? <strong>{author}</strong> : author}</>
+          <>{index > 0 && ', '}{author === profile.name ? <><strong>{author}</strong> <span class="meta">({ui[lang].coAuthor})</span></> : author}</>
         ))}
       </p>
       <p class="meta">{entry.venue}</p>
