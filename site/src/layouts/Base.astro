@@ -1,0 +1,95 @@
+---
+import { profile } from '../data/profile';
+import { ui, type Language } from '../data/ui';
+import { primaryRoutes, publicLanguages, routePath } from '../lib/routes.mjs';
+import { withBase } from '../lib/url';
+import '../styles/global.css';
+
+interface Props {
+  lang: Language;
+  page: string;
+  title: string;
+  description?: string;
+}
+
+const { lang, page, title, description } = Astro.props;
+const copy = ui[lang];
+const other = publicLanguages.find((language) => language !== lang);
+const documentTitle = page === 'home' ? profile.name : `${title} | ${profile.name}`;
+const errorPage = page === '404';
+const canonical = new URL(withBase(routePath(lang, page)), Astro.site);
+const alternate = other ? new URL(withBase(routePath(other, page)), Astro.site) : undefined;
+const sitemap = new URL(withBase('/sitemap-index.xml'), Astro.site);
+const socialImage = profile.socialImage.startsWith('TODO:')
+  ? undefined
+  : new URL(withBase(profile.socialImage), Astro.site);
+---
+<!doctype html>
+<html lang={lang} data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{documentTitle}</title>
+    {!errorPage && <link rel="canonical" href={canonical} />}
+    {!errorPage && alternate && <link rel="alternate" hreflang={lang} href={canonical} />}
+    {!errorPage && alternate && <link rel="alternate" hreflang={other} href={alternate} />}
+    <link rel="sitemap" href={sitemap} />
+    {description && <meta name="description" content={description} />}
+    {description && <meta property="og:description" content={description} />}
+    {description && <meta name="twitter:description" content={description} />}
+    {errorPage && <meta name="robots" content="noindex" />}
+    <meta property="og:title" content={documentTitle} />
+    <meta property="og:type" content="website" />
+    {!errorPage && <meta property="og:url" content={canonical} />}
+    {socialImage && <meta property="og:image" content={socialImage} />}
+    <meta name="twitter:card" content={socialImage ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={documentTitle} />
+    {socialImage && <meta name="twitter:image" content={socialImage} />}
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title={copy.rss} href={withBase(routePath(lang, 'rss'))} />
+    <script is:inline>
+      try {
+        const theme = localStorage.getItem('theme');
+        if (theme === 'light') document.documentElement.dataset.theme = theme;
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href={withBase('#main')}>{copy.skip}</a>
+    <header class="shell header">
+      <a class="site-name" href={withBase(routePath(lang, 'home'))}>{profile.name}</a>
+      <nav aria-label={copy.navigation}>
+        {primaryRoutes.map((item) => (
+          <a href={withBase(routePath(lang, item))} aria-current={page === item ? 'page' : undefined}>
+            {copy[item as keyof typeof copy]}
+          </a>
+        ))}
+      </nav>
+      <div class="controls">
+        {other && <a href={withBase(routePath(other, page))} lang={other} hreflang={other}>
+          {other === 'en' ? 'English' : '繁體中文'}
+        </a>}
+        <button type="button" id="theme-toggle" aria-pressed="false" hidden>{copy.toggle}</button>
+      </div>
+    </header>
+    <main class="shell main" id="main"><slot /></main>
+    <footer class="shell footer">
+      <span>{profile.name}</span>
+      <a href={withBase(routePath(lang, 'rss'))}>{copy.rss}</a>
+    </footer>
+    <script>
+      const toggle = document.querySelector<HTMLButtonElement>('#theme-toggle');
+      if (toggle) {
+        const root = document.documentElement;
+        toggle.setAttribute('aria-pressed', String(root.dataset.theme === 'light'));
+        toggle.hidden = false;
+        toggle.addEventListener('click', () => {
+          const theme = root.dataset.theme === 'light' ? 'dark' : 'light';
+          root.dataset.theme = theme;
+          toggle.setAttribute('aria-pressed', String(theme === 'light'));
+          try { localStorage.setItem('theme', theme); } catch {}
+        });
+      }
+    </script>
+  </body>
+</html>

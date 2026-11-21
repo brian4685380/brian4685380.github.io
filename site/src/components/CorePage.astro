@@ -1,0 +1,96 @@
+---
+import { getEntry, render } from 'astro:content';
+import { profile } from '../data/profile';
+import { publications } from '../data/publications';
+import { experience } from '../data/experience';
+import { ui, type Language } from '../data/ui';
+import { routePath } from '../lib/routes.mjs';
+import { withBase } from '../lib/url';
+import Base from '../layouts/Base.astro';
+import ContentLink from './ContentLink.astro';
+import ContentImage from './ContentImage.astro';
+import PublicationList from './PublicationList.astro';
+
+interface Props {
+  lang: Language;
+  page: 'home' | 'about' | 'publications' | 'experience' | '404';
+}
+
+const { lang, page } = Astro.props;
+const copy = ui[lang];
+const intro = page === 'home' || page === 'about';
+const entry = intro ? await getEntry('pages', `${lang}/${page}`) : undefined;
+if (intro && !entry) throw new Error(`Missing content entry: ${lang}/${page}`);
+const Content = entry ? (await render(entry)).Content : undefined;
+const title = page === '404' ? copy.missing : (entry?.data.title ?? copy[page]);
+const published = publications.filter(({ preprint }) => !preprint);
+const years = [...new Set(published.map(({ year }) => year))].sort((a, b) =>
+  typeof a === 'number' && typeof b === 'number' ? b - a : typeof a === 'number' ? -1 : typeof b === 'number' ? 1 : a.localeCompare(b)
+);
+const preprints = publications.filter(({ preprint }) => preprint);
+---
+<Base lang={lang} page={page} title={title}>
+  {page === 'home' ? (
+    <div class="intro">
+      <div>
+        <h1>{profile.name} <span class="chinese-name" lang="zh-Hant">{profile.chineseName}</span></h1>
+        <p class="meta">{profile.role[lang]}<br />{profile.affiliation[lang]}</p>
+        {Content && <div class="prose"><Content components={{ a: ContentLink, img: ContentImage }} /></div>}
+      </div>
+      {profile.photo.startsWith('TODO:')
+        ? <div class="photo-placeholder">{profile.photo}</div>
+        : <img class="portrait" src={withBase(profile.photo)} alt={copy.photo} />}
+    </div>
+  ) : <h1>{title}</h1>}
+
+  {page === 'home' && (
+    <section>
+      <h2><a href={withBase(routePath(lang, 'publications'))}>{copy.selected}</a></h2>
+      <PublicationList entries={publications.filter(({ selected }) => selected)} lang={lang} />
+    </section>
+  )}
+
+  {page === 'about' && (
+    <>
+      {Content && <div class="prose"><Content components={{ a: ContentLink, img: ContentImage }} /></div>}
+      <section>
+        <h2>{copy.contact}</h2>
+        <ul class="entry-list">
+          {Object.entries(profile.links).map(([label, url]) => (
+            <li>{url.startsWith('TODO:')
+              ? <>{label} · <span class="meta">{url}</span></>
+              : <a href={withBase(url)}>{label}</a>}</li>
+          ))}
+        </ul>
+      </section>
+    </>
+  )}
+
+  {page === 'publications' && (
+    <>
+      {years.map((year) => (
+        <section>
+          <h2>{year}</h2>
+          <PublicationList entries={published.filter((entry) => entry.year === year)} lang={lang} />
+        </section>
+      ))}
+      {preprints.length > 0 && <section>
+        <h2>{copy.preprints}</h2>
+        <PublicationList entries={preprints} lang={lang} />
+      </section>}
+    </>
+  )}
+
+  {page === 'experience' && (
+    <ul class="entry-list">
+      {experience.map((item) => (
+        <li>
+          <strong>{item.title}</strong>
+          <p class="meta">{item.organization} · {item.period}</p>
+        </li>
+      ))}
+    </ul>
+  )}
+
+  {page === '404' && <p><a href={withBase(routePath(lang, 'home'))}>{copy.back}</a></p>}
+</Base>

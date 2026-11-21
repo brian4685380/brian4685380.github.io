@@ -1,0 +1,33 @@
+---
+import { profile } from '../data/profile';
+import type { Publication } from '../data/publications';
+import { ui, type Language } from '../data/ui';
+import { withBase } from '../lib/url';
+
+interface Props {
+  entries: Publication[];
+  lang: Language;
+}
+
+const { entries, lang } = Astro.props;
+---
+<ul class="entry-list">
+  {entries.map((entry) => (
+    <li>
+      <h3>{entry.title}</h3>
+      {entry.sample && <p class="sample">{ui[lang].sample}</p>}
+      <p>
+        {entry.authors.map((author, index) => (
+          <>{index > 0 && ', '}{author === profile.name ? <strong>{author}</strong> : author}</>
+        ))}
+      </p>
+      <p class="meta">{entry.venue}</p>
+      {entry.teaser && <img src={withBase(entry.teaser.src)} alt={entry.teaser.alt} loading="lazy" />}
+      {entry.links && <ul class="inline-list">
+        {Object.entries(entry.links).map(([label, url]) => (
+          url && !url.startsWith('TODO:') && <li><a href={withBase(url)}>{label}</a></li>
+        ))}
+      </ul>}
+    </li>
+  ))}
+</ul>

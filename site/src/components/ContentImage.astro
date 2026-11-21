@@ -1,0 +1,5 @@
+---
+import { withBase } from '../lib/url';
+const { src, ...attributes } = Astro.props;
+---
+<img loading="lazy" {...attributes} src={typeof src === 'string' ? withBase(src) : undefined} />

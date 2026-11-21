@@ -1,0 +1,5 @@
+---
+import { withBase } from '../lib/url';
+const { href, ...attributes } = Astro.props;
+---
+<a {...attributes} href={typeof href === 'string' ? withBase(href) : undefined}><slot /></a>

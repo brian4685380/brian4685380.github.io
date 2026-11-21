@@ -1,0 +1,20 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import 'katex/dist/katex.min.css';
+import Base from '../layouts/Base.astro';
+import ContentLink from './ContentLink.astro';
+import ContentImage from './ContentImage.astro';
+import { ui } from '../data/ui';
+
+const { entry } = Astro.props as { entry: CollectionEntry<'blog'> };
+const { lang, slug, title, description, pubDate, sample } = entry.data;
+const { Content } = await render(entry);
+---
+<Base lang={lang} page={`blog/${slug}`} title={title} description={description}>
+  <article class="prose">
+    <h1>{title}</h1>
+    {sample && <p class="sample">{ui[lang].sample}</p>}
+    {pubDate && <p class="meta"><time datetime={pubDate}>{pubDate}</time></p>}
+    <Content components={{ a: ContentLink, img: ContentImage }} />
+  </article>
+</Base>

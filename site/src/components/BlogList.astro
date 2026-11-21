@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+import { getPosts } from '../lib/blog';
+import { routePath } from '../lib/routes.mjs';
+import { withBase } from '../lib/url';
+import { ui, type Language } from '../data/ui';
+
+const { lang } = Astro.props as { lang: Language };
+const copy = ui[lang];
+const posts = await getPosts(lang);
+---
+<Base lang={lang} page="blog" title={copy.blog}>
+  <h1>{copy.blog}</h1>
+  <ul class="entry-list">
+    {posts.map(({ data }) => (
+      <li>
+        <h2><a href={withBase(routePath(lang, `blog/${data.slug}`))}>{data.title}</a></h2>
+        {data.sample && <p class="sample">{copy.sample}</p>}
+        {data.pubDate && <p class="meta"><time datetime={data.pubDate}>{data.pubDate}</time></p>}
+        <p>{data.description}</p>
+      </li>
+    ))}
+  </ul>
+</Base>
