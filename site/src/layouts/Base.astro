@@ -69,7 +69,7 @@ const socialImage = profile.socialImage.startsWith('TODO:')
         {other && <a href={withBase(routePath(other, page))} lang={other} hreflang={other}>
           {other === 'en' ? 'English' : '繁體中文'}
         </a>}
-        <button type="button" id="theme-toggle" aria-pressed="false" hidden>{copy.toggle}</button>
+        <button type="button" id="theme-toggle" aria-label={copy.toggle} aria-pressed="false" data-dark={copy.dark} data-light={copy.light} hidden>{copy.dark}</button>
       </div>
     </header>
     <main class="shell main" id="main"><slot /></main>
@@ -81,12 +81,17 @@ const socialImage = profile.socialImage.startsWith('TODO:')
       const toggle = document.querySelector<HTMLButtonElement>('#theme-toggle');
       if (toggle) {
         const root = document.documentElement;
-        toggle.setAttribute('aria-pressed', String(root.dataset.theme === 'light'));
+        const syncToggle = () => {
+          const light = root.dataset.theme === 'light';
+          toggle.setAttribute('aria-pressed', String(light));
+          toggle.textContent = (light ? toggle.dataset.light : toggle.dataset.dark) ?? '';
+        };
+        syncToggle();
         toggle.hidden = false;
         toggle.addEventListener('click', () => {
           const theme = root.dataset.theme === 'light' ? 'dark' : 'light';
           root.dataset.theme = theme;
-          toggle.setAttribute('aria-pressed', String(theme === 'light'));
+          syncToggle();
           try { localStorage.setItem('theme', theme); } catch {}
         });
       }

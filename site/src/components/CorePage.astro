@@ -7,6 +7,7 @@ import { ui, type Language } from '../data/ui';
 import { routePath } from '../lib/routes.mjs';
 import { withBase } from '../lib/url';
 import Base from '../layouts/Base.astro';
+import ContactLinks from './ContactLinks.astro';
 import ContentLink from './ContentLink.astro';
 import ContentImage from './ContentImage.astro';
 import PublicationList from './PublicationList.astro';
@@ -36,6 +37,7 @@ const preprints = publications.filter(({ preprint }) => preprint);
         <h1>{profile.name} <span class="chinese-name" lang="zh-Hant">{profile.chineseName}</span></h1>
         <p class="meta">{profile.role[lang]}<br />{profile.affiliation[lang]}</p>
         {Content && <div class="prose"><Content components={{ a: ContentLink, img: ContentImage }} /></div>}
+        <ContactLinks />
       </div>
       {profile.photo.startsWith('TODO:')
         ? <div class="photo-placeholder">{profile.photo}</div>
@@ -55,13 +57,7 @@ const preprints = publications.filter(({ preprint }) => preprint);
       {Content && <div class="prose"><Content components={{ a: ContentLink, img: ContentImage }} /></div>}
       <section>
         <h2>{copy.contact}</h2>
-        <ul class="entry-list">
-          {Object.entries(profile.links).map(([label, url]) => (
-            <li>{url.startsWith('TODO:')
-              ? <>{label} · <span class="meta">{url}</span></>
-              : <a href={withBase(url)}>{label}</a>}</li>
-          ))}
-        </ul>
+        <ContactLinks />
       </section>
     </>
   )}

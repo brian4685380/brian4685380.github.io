@@ -13,8 +13,9 @@ export const profile = {
   socialImage: 'TODO: Supply a social preview image',
   links: {
     Email: 'mailto:brian4685380@gmail.com',
+    CV: '/assets/cv.pdf',
     GitHub: 'https://github.com/brian4685380',
     'Google Scholar': 'https://scholar.google.com/citations?user=cnPIOscAAAAJ&hl=en&gmla=AN_4Zu-tbSEimatzzN_W2gHCewBlBNooxsr4ehTe23ddz2nbq_b_EVGVNcjyR46N631RHea1HwEcem9zL8uU_kPCyv69YbAk9ajyKdqn3hc&sciund=3908389530611034455',
-    CV: '/assets/cv.pdf',
+    LinkedIn: 'https://www.linkedin.com/in/shao-xiang-yuan-a43b922b0/',
   },
 };

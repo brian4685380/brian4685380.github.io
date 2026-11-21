@@ -1,0 +1,9 @@
+---
+import { profile } from '../data/profile';
+import { withBase } from '../lib/url';
+
+const links = Object.entries(profile.links).filter(([, url]) => !url.startsWith('TODO:'));
+---
+<ul class="inline-list contact-links" role="list">
+  {links.map(([label, url]) => <li><a href={withBase(url)}>{label}</a></li>)}
+</ul>
