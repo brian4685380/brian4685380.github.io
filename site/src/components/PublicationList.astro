@@ -18,9 +18,10 @@ const { entries, lang } = Astro.props;
       {entry.sample && <p class="sample">{ui[lang].sample}</p>}
       <p>
         {entry.authors.map((author, index) => (
-          <>{index > 0 && ', '}{author === profile.name ? <><strong>{author}</strong> <span class="meta">({ui[lang].coAuthor})</span></> : author}</>
+          <>{index > 0 && ', '}{author === profile.name ? <strong>{author}</strong> : author}{entry.equalContributors?.includes(author) && <sup>*</sup>}</>
         ))}
       </p>
+      {Boolean(entry.equalContributors?.length) && <p class="meta">* {ui[lang].equalContribution}</p>}
       <p class="meta">{entry.venue}</p>
       {entry.teaser && <img src={withBase(entry.teaser.src)} alt={entry.teaser.alt} loading="lazy" />}
       {entry.links && <ul class="inline-list">

@@ -2,6 +2,7 @@ export type Publication = {
   id: string;
   title: string;
   authors: string[];
+  equalContributors?: string[];
   venue: string;
   year: number | string;
   selected: boolean;
@@ -23,6 +24,7 @@ export const publications: Publication[] = [
       'Kuan-Hao Huang',
       'Shao-Hua Sun',
     ],
+    equalContributors: ['Yu-Hung Wu', 'Shao-Xiang Yuan'],
     venue: 'arXiv preprint',
     year: 2026,
     selected: true,
